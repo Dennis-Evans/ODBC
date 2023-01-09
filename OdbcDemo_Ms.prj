@@ -1,0 +1,15 @@
+-- OdbcDemo_MS
+#noedit
+#system win32
+#model clarion dll
+#pragma debug(vid=>full)
+#pragma optimize(cpu=>386)
+#pragma define(_ABCDllMode_=>0)
+#pragma define(_ABCLinkMode_=>1)
+#pragma define(_svDllMode_=>0)
+#pragma define(_svLinkMode_=>1)
+#compile "OdbcDemo_Ms.clw"
+#compile "callAsync.clw"
+#pragma link("odbc_13.lib")
+#pragma link("odbc_32DRm.lib")
+#link "OdbcDemo_Ms.exe"
