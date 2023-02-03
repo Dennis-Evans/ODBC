@@ -1,22 +1,18 @@
-
   member()
   
-  include('odbcConnStrCl.inc'),once 
-
-  map 
+  include('odbcConnStrCl.inc'),once
+  
+  map
   end
-
+  
 eTrustedConnTextOn   equate('Trusted_Connection=yes;')
 eTrustedConnTextOff  equate('Trusted_Connection=no;')
-
 eDriverName equate('ODBC Driver 13 for SQL Server')
-
 eDriverLabel         equate('Driver={{')
 eServerLabel         equate('Server=')
 eDbLabel             equate('Database=')
 
 eConnDelimit      equate(';')
-
 ! -------------------------------------------------------------------------------------
 ! Init 
 ! set up the instance based on the db input and uses the three string input to prime 

@@ -4,7 +4,7 @@
   OMIT('_EndOfInclude_',_ODBCConnectionStrPresent_)
 _ODBCConnectionStrPresent_   EQUATE(1)
 
-  include('odbcTypes.inc'),once
+  !include('odbcTypes.inc'),once
   include('dynstr.inc'),once
 
 ! some default string lengths of the connections   

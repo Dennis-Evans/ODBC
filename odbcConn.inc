@@ -15,6 +15,8 @@ Opened equate
 CallerOpened  equate
 failed equate
   end
+
+!SQLRETURN        equate(short) 
   
 ODBCConnectionClType class,type,module('odbcConn.clw'),link('odbcConn.clw',_ABCLinkMode_),dll(_ABCDllMode_)
 ! ODBC handles 

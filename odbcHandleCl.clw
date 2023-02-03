@@ -1,16 +1,15 @@
-
   member()
   
   include('odbcHandleCl.inc'),once 
-  include('odbcTypes.inc'),once 
-
-  map 
+  include('odbcTypes.inc'),once
+  
+  map
     module('odbc32')
       SQLAllocHandle(SQLSMALLINT HandleType, SQLHANDLE InputHandle, *SQLHANDLE OutputHandlePtr),SqlReturn,pascal
       SQLFreeHandle(SqlSmallInt hType, SqlHandle h),long,pascal
       SQLFreeStmt(SQLHSTMT StatementHandle, SQLSMALLINT opt),sqlReturn,pascal,proc
       SQLSetEnvAttr(SQLHENV EnvironmentHandle, SQLINTEGER Attribute,  SQLPOINTER Value, SQLINTEGER StringLength),sqlReturn,pascal
-    end 
+    end
   end
 
 OdbcHandleClType.kill procedure() !,virtual

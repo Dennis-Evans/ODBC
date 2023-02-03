@@ -1,21 +1,21 @@
 
   member()
   
-  include('odbcConn.inc'),once 
-  include'odbcTypes.inc'),once
+  include('odbcTypes.inc'),once
+  include('odbcConn.inc'),once  
   include('svcom.inc'),once
-
-  map 
+  
+  map
     module('odbc32')
       SQLConnect(SQLHDBC ConnectionHandle, *SQLCHAR ServerName, SQLSMALLINT NameLength1, long UserName, SQLSMALLINT NameLength2, long Authentication, SQLSMALLINT NameLength3),sqlReturn,pascal,raw
       SQLDriverConnect(SQLHDBC ConnectionHandle, SQLHWND WindowHandle, long InConnectionString, SQLSMALLINT StringLength1, long  OutConnectionString, SQLSMALLINT BufferLength, *SQLSMALLINT StringLength2Ptr, SQLUSMALLINT DriverCompletion),sqlReturn,pascal,raw,Name('SQLDriverConnectW')
-      SQLDisconnect(SQLHDBC ConnectionHandle),sqlReturn,pascal   
+      SQLDisconnect(SQLHDBC ConnectionHandle),sqlReturn,pascal
       SQLGetInfo(SQLHDBC hDbc, long attrib, *cstring valuePtr, long buffLength, *long strLenPtr),long,pascal,raw
       SQLSetEnvAttr(SQLHENV EnvironmentHandle, SQLINTEGER Attribute,  SQLPOINTER Value, SQLINTEGER StringLength),sqlReturn,pascal
       SQLSetStmtAttr(SQLHSTMT hStmt, SQLINTEGER attribute, SQLPOINTER value, SQLINTEGER id),long,pascal,Name('SQLSetStmtAttrW')
       SQLSetConnectAttr(SQLHDBC Handle, SQLINTEGER Attribute, SQLPOINTER ValuePtr, SQLINTEGER StringLength),sqlReturn,pascal,name('SQLSetConnectAttrW')
-      SQLGetConnectAttr(SQLHDBC Handle, SQLINTEGER Attribute, *SQLPOINTER ValuePtr, SQLINTEGER BufferLength, SQLINTEGER StringLengthPtr),sqlReturn,pascal,name('SQLGetConnectAttrW')
-    end 
+      SQLGetConnectAttr(SQLHDBC Handle, SQLINTEGER Attribute, *SQLPOINTER ValuePtr, SQLINTEGER BufferLength, SQLINTEGER StringLengthPtr),sqlReturn,pascal,name('SQLGetConnectAttrW') 
+      end 
   end
 
 eNoWindow  equate(0)
@@ -197,7 +197,7 @@ outs cstr
 
   if (retv = sql_Success) or (retv = sql_success_with_info)
     ! make the connection string a wide string for the ODBC 
-    stop(self.connStr.ConnectionString())
+
     if (wideStr.init(self.connStr.ConnectionString()) = false) 
       return sql_Error
     end
