@@ -6,10 +6,9 @@
   map 
     module('c6')
       memmove(long dest, long src, long num),long,proc,name('_memmove')
-      strLen(long cstr),long,name('_strlen')
+      strLen(long cstr),long,name('_strlen') 
     end 
   end
-
 ! ---------------------------------------------------------------------------
   
 sqlStrClType.init procedure()

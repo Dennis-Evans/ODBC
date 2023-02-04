@@ -1,4 +1,3 @@
-
 !ABCIncludeFIle
 
   OMIT('_EndOfInclude_',_ODBCParamPresent_)
