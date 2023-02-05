@@ -124,11 +124,11 @@ numberBytes long,auto
 !
 ! parameters for the ODBC api call
 ! hStmt   = handle to the ODBC statement
-! paramId = ord value of the parmaeter, 1, 2, 3 ... the ordinal position
-! InOutType = type of parmeter in/out/inout
+! paramId = ord value of the parameter, 1, 2, 3 ... the ordinal position
+! InOutType = type of parameter in/out/inOut
 ! value type = the C data type of the parameter, an equate value from the API
 ! param type = the sql data type of the parameter, an equate value from the API
-! param size = the size, in bytes of the column for this parameter typicall the same as the paraLength
+! param size = the size, in bytes of the column for this parameter typically the same as the paraLength
 ! decimal digits = number of decimal of the column
 ! ParamPtr = pointer to the data for the parameter
 ! paramLength = the size of the paramPtr buffer
@@ -187,7 +187,7 @@ retv       sqlReturn
 ! are bound
 ! note, this must be called when using a table valued parameter
 ! ---------------------------------------------------------------------------------
-ParametersClass.unfocusTableParameter procedure(SQLHSTMT hStmt)
+ParametersClass.unFocusTableParameter procedure(SQLHSTMT hStmt)
 
 retv       sqlReturn
 
@@ -196,7 +196,7 @@ retv       sqlReturn
   retv = SQLSetStmtAttr(hStmt, SQL_SOPT_SS_PARAM_FOCUS, 0, SQL_IS_INTEGER)
 
   return retv
-! end unfocusTableParameter
+! end unFocusTableParameter
 ! -------------------------------------------------------------------------------
 
 ! ---------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ retv sqlReturn
   end
 
   self.paramQ.paramId = records(self.ParamQ) + 1
-  self.paramQ.InOutType = SQL_PARAM_INPUT  ! tablesare always inputs
+  self.paramQ.InOutType = SQL_PARAM_INPUT  ! tables are always inputs
   self.paramQ.valueType = SQL_C_DEFAULT    ! default for the table type
   self.paramQ.paramType = SQL_SS_TABLE     ! type
   self.paramQ.paraSize = numberRows
@@ -260,7 +260,7 @@ retv sqlReturn
 
   add(self.paramQ)
 
-  if (errorcode() > 0)
+  if (errorCode() > 0)
     retv = level:notify
   end
 
@@ -296,7 +296,7 @@ retv     byte(level:benign)
 
   add(self.paramQ)
 
-  if (errorcode() > 0)
+  if (errorCode() > 0)
     retv = level:notify
   end
 
@@ -440,7 +440,7 @@ retv sqlReturn
   retv = self.addParameter(SQL_PARAM_INPUT, SQL_C_SLONG, SQL_INTEGER, eSizeLong, 0, array, eSizeLong)
 
   return retv
-! end AddlongArray
+! end AddLongArray
 ! ------------------------------------------------------------------------------------
 
 ! --------------------------------------------------------------------------------
@@ -507,7 +507,7 @@ recCount long
   code
 
   recCount = records(self.paramQ)
-  loop count = startpos to recCount
+  loop count = startPos to recCount
     get(self.paramQ, count)
     if (count < recCount)
       sqlCode.cat(eMarkerComma)
@@ -528,7 +528,7 @@ retv   sqlReturn(sql_Success)
 
   self.paramQ.paramName = upper(pName)
   get(self.paramQ, +self.paramQ.paramName)
-  if (errorcode() > 0)
+  if (errorCode() > 0)
     retv = sql_Error
   end
 

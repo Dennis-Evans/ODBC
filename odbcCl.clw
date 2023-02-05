@@ -17,15 +17,15 @@
       SQLFreeStmt(SQLHSTMT StatementHandle, SQLUSMALLINT Option),sqlReturn,pascal
       !SQLSetStmtAttr(SQLHSTMT StatementHandle, SQLINTEGER Attribute, SQLPOINTER ValuePtr, SQLINTEGER StringLength),sqlReturn,pascal
     end
-    module('odbcdr')
-      SQLCompleteAsync(SQLSMALLINT HandleType, SQLHSTMT Handle,  *RETCODE AsyncRetCodePtr),sqlreturn,pascal,name('SQLCompleteAsync')
+    module('odbcDr')
+      SQLCompleteAsync(SQLSMALLINT HandleType, SQLHSTMT Handle,  *RETCODE AsyncRetCodePtr),sqlReturn,pascal,name('SQLCompleteAsync')
     end
   end
 
 ! ---------------------------------------------------------------------------
 ! Init
 ! sets up the instance for use.  assigns the connection object input to the
-! data member.  allocates and init's the class to handle the sql statment or string.
+! data member.  allocates and init's the class to handle the sql statement or string.
 ! ---------------------------------------------------------------------------
 odbcClType.init procedure(ODBCConnectionClType conn)
 
@@ -81,23 +81,23 @@ odbcClType.destruct procedure()
 ! unbinds any columns that are currently bound
 ! typical use is when a call that returns multiple result sets is in use.
 ! the first result set is processed and then call this to unbind the columns,
-! then bind the caloums for the second result set,
+! then bind the columns  for the second result set,
 ! repeat as needed
 ! ----------------------------------------------------------------------
-odbcClType.unBindColums procedure()
+odbcClType.unBindColumns procedure()
 
 retv sqlReturn
 
   code
 
-  ! if therer is a statment handle then unbind
+  ! if there is a statement handle then unbind
   ! if not then nothing to do
   if (self.conn.getHStmt() > 0)
     retv = SQLFreeStmt(self.conn.getHStmt(), SQL_UNBIND)
   end
 
   return
-! end unBindColums
+! end unBindColumns
 ! ----------------------------------------------------------------------
 
 ! ----------------------------------------------------------------------
@@ -240,7 +240,7 @@ hStmt  SQLHSTMT
 ! Binds the columns from the queue to the columns in the result set
 ! then calls fetch to read the result set
 ! -----------------------------------------------------------------------------
-odbcClType.fillResult procedure(*columnsClass cols, *queue q, long setId = 1) !,sqlReturn,private
+odbcClType.fillResult procedure(*columnsClass cols, *queue q) !,sqlReturn,private
 
 retv   sqlReturn
 
@@ -248,7 +248,7 @@ retv   sqlReturn
 
   ! bind the columns just before the fetch, not needed for the execute query calls
   ! so do it here,
-  retv = cols.bindColumns(self.conn.getHstmt())
+  retv = cols.bindColumns(self.conn.getHStmt())
 
   ! if ok then go fetch the result
   if (retv = sql_success)
@@ -274,16 +274,16 @@ err    ODBCErrorClType
   code
 
   retv = err.Init()
-  err.getError(SQL_HANDLE_STMT, self.conn.getHstmt())
+  err.getError(SQL_HANDLE_STMT, self.conn.getHStmt())
 
   return
 ! end getError
 ! -----------------------------------------------------------------------------
 
-odbcClType.endAsync procedure() !sqlreturn
+odbcClType.endAsync procedure() !sqlReturn
 
 retv     sqlReturn
-outCode  retcode
+outCode  retCode
 
   code
 
@@ -291,6 +291,78 @@ outCode  retcode
 
   return retv
 ! -----------------------------------------------------------------------------
+
+!region groups
+
+! -----------------------------------------------------------------------------
+! Binds the columns from the group to the columns in the result set
+! then calls fetch to read the result set
+! this result set will contain a single row
+! -----------------------------------------------------------------------------
+odbcClType.fillResult procedure(*columnsClass cols, *group g) !,sqlReturn,private
+
+retv   sqlReturn
+
+  code
+
+  ! bind the columns just before the fetch, not needed for the execute query calls
+  ! so do it here,
+  retv = cols.bindColumns(self.conn.getHStmt())
+
+  ! if ok then go fetch the result
+  if (retv = sql_success)
+    retv = self.fetch()
+  end
+
+  if (retv <> sql_Success)
+    self.getError()
+  end
+
+  return retv
+! end fillResult
+! -----------------------------------------------------------------------------
+
+odbcClType.execQuery procedure(*IDynStr sqlCode, *columnsClass cols, *group g) !,sqlReturn,virtual
+
+retv sqlReturn,auto
+
+  code
+
+  if (self.setupQuery(sqlCode, cols) <> sql_Success)
+    return sql_error
+  end
+
+  retv = self.execQuery()
+
+  ! fill the group
+  if (retv = sql_Success)
+    retv = self.fillResult(cols, g)
+  end
+
+  return retv
+! end execQuery ---------------------------------------------------------------
+
+odbcClType.execQuery procedure(*IDynStr sqlCode, *columnsClass cols, *ParametersClass params, *group g) !,sqlReturn,virtual
+
+retv sqlReturn,auto
+
+  code
+
+  if (self.setupQuery(sqlCode, cols) <> sql_Success)
+    return sql_error
+  end
+
+  retv = self.execQuery()
+
+  ! fill the queue
+  if (retv = sql_Success)
+    retv = self.fillResult(cols, g)
+  end
+
+  return retv
+! end execQuery ---------------------------------------------------------------
+
+!endregion groups
 
 ! ------------------------------------------------------------------------------
 ! execQuery
@@ -563,7 +635,7 @@ retv    sqlReturn
 ! ------------------------------------------------------------------------------
 ! execSp
 ! call an stored procedure that returns a result set, the
-! queue parameter is bound to the resutls,
+! queue parameter is bound to the results,
 ! sp does not expect any parameters
 ! ------------------------------------------------------------------------------
 odbcClType.execSp procedure(string spName, columnsClass cols, *queue q) !,sqlReturn
@@ -588,7 +660,7 @@ retv    sqlReturn
 ! -----------------------------------------------------------------------------
 ! execSp
 ! call an stored procedure that returns a result set, the
-! queue parameter is bound to the resutls,
+! queue parameter is bound to the results,
 ! binds any parameters and calls execSp/0
 ! ------------------------------------------------------------------------------
 odbcClType.execSp procedure(string spName, columnsClass cols, *ParametersClass params, *queue q) !,sqlReturn
@@ -615,7 +687,7 @@ retv    sqlReturn
 ! ----------------------------------------------------------------------
 
 ! ----------------------------------------------------------------------
-! calls a sclar function and puts the returned value in the bound parameter
+! calls a scalar function and puts the returned value in the bound parameter
 ! ----------------------------------------------------------------------
 odbcClType.callScalar procedure(string spName, *ParametersClass params)
 
@@ -636,7 +708,7 @@ retv    sqlReturn
 ! ----------------------------------------------------------------------
 
 ! ----------------------------------------------------------------------
-! sets up a call, just formats the string with the {call spname()}
+! sets up a call, just formats the string with the {call spName()}
 ! this one is used for a stored procedure with no parameters
 ! ----------------------------------------------------------------------
 odbcClType.setupSpCall procedure(string spName)
@@ -653,8 +725,8 @@ params   &ParametersClass
 ! ----------------------------------------------------------------------
 
 ! ----------------------------------------------------------------------
-! sets up a call, just formats the string with the {call spname(?, ...)}
-! this one adds a pllace holder for each parameter
+! sets up a call, just formats the string with the {call spName(?, ...)}
+! this one adds a place holder for each parameter
 ! ----------------------------------------------------------------------
 odbcClType.setupSpCall procedure(string spName, *ParametersClass params) ! sqlReturn,private
 
